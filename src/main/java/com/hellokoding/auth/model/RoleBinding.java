@@ -1,6 +1,7 @@
 package com.hellokoding.auth.model;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -31,27 +32,11 @@ public class RoleBinding {
     this.id = id;
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Set<User> getUsers() {
-    return users;
-  }
-
-  public void setUsers(Set<User> users) {
-    this.users = users;
-  }
-
-  public List<Entitlements> getEntitlements() {
+  public List<RoleBindingEntitlements> getEntitlements() {
     return entitlements;
   }
 
-  public void setEntitlements(Set<Entitlement> privileges) {
-    this.privileges = privileges;
+  public void setEntitlements(List<RoleBindingEntitlements> entitlements) {
+    this.entitlements = entitlements;
   }
 }

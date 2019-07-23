@@ -1,5 +1,8 @@
 package com.hellokoding.auth.model;
 
+import com.hellokoding.auth.util.ResourceType;
+
+import java.util.ArrayList;
 import java.util.Set;
 import javax.persistence.*;
 
@@ -10,7 +13,9 @@ public class Privilege {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String name;
+  private ResourceType resourceType;
+
+  private ArrayList<String> operations;
 
   @ManyToMany(mappedBy = "privileges")
   private Set<Role> roles;
@@ -22,14 +27,6 @@ public class Privilege {
 
     public void setId(Long id) {
       this.id = id;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public void setName(String name) {
-      this.name = name;
     }
 
 }
