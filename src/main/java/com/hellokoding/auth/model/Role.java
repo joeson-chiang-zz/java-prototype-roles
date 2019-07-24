@@ -1,6 +1,7 @@
 package com.hellokoding.auth.model;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -13,7 +14,7 @@ public class Role {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
+    private List<User> users;
 
     @ManyToMany
     @JoinTable(
@@ -22,7 +23,7 @@ public class Role {
         name = "role_id", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(
         name = "privilege_id", referencedColumnName = "id"))
-    private Set<Privilege> privileges;
+    private List<Privilege> privileges;
 
     public Long getId() {
         return id;
@@ -40,19 +41,19 @@ public class Role {
         this.name = name;
     }
 
-    public Set<User> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 
-    public Set<Privilege> getPrivileges() {
+    public List<Privilege> getPrivileges() {
     return privileges;
   }
 
-    public void setPrivileges(Set<Privilege> privileges) {
+    public void setPrivileges(List<Privilege> privileges) {
     this.privileges = privileges;
   }
 }

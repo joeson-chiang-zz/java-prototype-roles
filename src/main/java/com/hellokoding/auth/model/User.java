@@ -1,6 +1,7 @@
 package com.hellokoding.auth.model;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,7 +19,17 @@ public class User {
     private String passwordConfirm;
 
     @ManyToMany
-    private Set<Role> roles;
+    private List<Role> roles;
+
+    @ManyToMany
+    @JoinTable(
+      name = "roles_bindings",
+      joinColumns = @JoinColumn(
+        name = "role_id", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(
+        name = "user_id", referencedColumnName = "id"))
+    private List<RoleBinding> roleBindings;
+
 
     public Long getId() {
         return id;
@@ -37,26 +48,30 @@ public class User {
     }
 
     public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPasswordConfirm() {
-        return passwordConfirm;
+      return password;
     }
 
     public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
+      this.passwordConfirm = passwordConfirm;
     }
 
-    public Set<Role> getRoles() {
+    public String getPasswordConfirm() {
+      return passwordConfirm;
+    }
+
+    public void setPassword(String password) {
+    this.password = password;
+  }
+
+    public List<RoleBinding> getRoleBindings() {
+    return roleBindings;
+  }
+
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 }

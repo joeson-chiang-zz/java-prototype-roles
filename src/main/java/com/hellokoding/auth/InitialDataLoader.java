@@ -1,17 +1,15 @@
 package com.hellokoding.auth;
 
 
-import com.hellokoding.auth.model.Privilege;
-import com.hellokoding.auth.model.Role;
-import com.hellokoding.auth.model.User;
-import com.hellokoding.auth.repository.PrivilegeRepository;
-import com.hellokoding.auth.repository.RoleRepository;
-import com.hellokoding.auth.repository.UserRepository;
+import com.hellokoding.auth.model.*;
+import com.hellokoding.auth.repository.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 ;
+import com.hellokoding.auth.util.ResourceType;
 import org.springframework.stereotype.Component;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.ApplicationListener;
@@ -33,6 +31,12 @@ public class InitialDataLoader implements
   @Autowired
   private PrivilegeRepository privilegeRepository;
 
+  @Autowired
+  private RoleBindingEntitlementRepository roleBindingEntitlementRepository;
+
+  @Autowired
+  private RoleBindingRepository roleBindingRepository;
+
 //  @Autowired
 //  private PasswordEncoder passwordEncoder;
 
@@ -42,37 +46,35 @@ public class InitialDataLoader implements
 
     if (alreadySetup)
       return;
-    Privilege readPrivilege
-      = createPrivilegeIfNotFound("READ_PRIVILEGE");
     Privilege writePrivilege
-      = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+      = createPrivilegeIfNotFound(ResourceType.FLOW, Arrays.asList("create", "read", "update", "delete"));
+    Privilege readPrivilege
+      = createPrivilegeIfNotFound(ResourceType.FLOW, Arrays.asList("read"));
 
-    Set<Privilege> adminPrivileges = new HashSet<Privilege>(Arrays.asList(readPrivilege, writePrivilege));
-    createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-    createRoleIfNotFound("ROLE_USER", new HashSet<Privilege>(Arrays.asList(readPrivilege)));
+    createRoleIfNotFound("ROLE_ADMIN", Arrays.asList(writePrivilege));
+    createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
 
     Role adminRole = roleRepository.findByName("ROLE_ADMIN");
     User user = new User();
     user.setUsername("admin");
-//    user.setFirstName("Test");
-//    user.setLastName("Test");
-//    user.setPassword(passwordEncoder.encode("test"));
-//    user.setEmail("test@test.com");
-    user.setRoles(new HashSet<Role>(Arrays.asList(adminRole)));
-//    user.setEnabled(true);
+    user.setRoles(Arrays.asList(adminRole));
     userRepository.save(user);
     System.out.println("user admin is created with name " + user.getUsername()  + " and roles " + user.getRoles());
+
+    createRoleBindingEntitlement(ResourceType.FLOW, Arrays.asList((long) 1, (long) 2, (long) 3));
+    createRoleBinding((long) 1, (long) 1);
 
     alreadySetup = true;
   }
 
   @Transactional
-  private Privilege createPrivilegeIfNotFound(String name) {
-
-    Privilege privilege = privilegeRepository.findByName(name);
+  private Privilege createPrivilegeIfNotFound(ResourceType type, List<String> operations) {
+    // TODO: fix this
+    Privilege privilege = null;
     if (privilege == null) {
       privilege = new Privilege();
-      privilege.setName(name);
+      privilege.setResourceType(type);
+      privilege.setOperations(operations);
       privilegeRepository.save(privilege);
     }
     return privilege;
@@ -80,7 +82,7 @@ public class InitialDataLoader implements
 
   @Transactional
   private Role createRoleIfNotFound(
-    String name, Set<Privilege> privileges) {
+    String name, List<Privilege> privileges) {
 
     Role role = roleRepository.findByName(name);
     if (role == null) {
@@ -90,5 +92,24 @@ public class InitialDataLoader implements
       roleRepository.save(role);
     }
     return role;
+  }
+
+  @Transactional
+  private RoleBinding createRoleBinding (Long roleId, Long userId) {
+    RoleBinding roleBinding = new RoleBinding();
+    roleBinding.setRoleId(roleId);
+    roleBinding.setUserId(userId);
+    roleBindingRepository.save(roleBinding);
+    return roleBinding;
+  }
+
+  @Transactional
+  private RoleBindingEntitlement createRoleBindingEntitlement(
+    ResourceType type, List<Long> instanceIds) {
+    RoleBindingEntitlement entitlement = new RoleBindingEntitlement();
+    entitlement.setResourceType(type);
+    entitlement.setInstanceIds(instanceIds);
+    roleBindingEntitlementRepository.save(entitlement);
+    return entitlement;
   }
 }

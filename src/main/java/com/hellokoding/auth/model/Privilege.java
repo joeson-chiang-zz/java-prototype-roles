@@ -3,6 +3,7 @@ package com.hellokoding.auth.model;
 import com.hellokoding.auth.util.ResourceType;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 
@@ -15,11 +16,8 @@ public class Privilege {
 
   private ResourceType resourceType;
 
-  private ArrayList<String> operations;
-
-  @ManyToMany(mappedBy = "privileges")
-  private Set<Role> roles;
-
+  @ElementCollection
+  private List<String> operations;
 
   public Long getId() {
       return id;
@@ -29,4 +27,19 @@ public class Privilege {
       this.id = id;
     }
 
+    public void setResourceType(ResourceType resourceType){
+      this.resourceType = resourceType;
+    };
+
+    public ResourceType getResourceType() {
+      return resourceType;
+    };
+
+  public void setOperations(List<String> operations){
+    this.operations = operations;
+  };
+
+  public List<String> getOperations() {
+    return operations;
+  };
 }

@@ -2,7 +2,6 @@ package com.hellokoding.auth.model;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "rolebinding")
@@ -17,12 +16,8 @@ public class RoleBinding {
   private Long groupId;
   private Long workspaceId;
 
-  private List<RoleBindingEntitlements> entitlements;
-
-//  @ManyToMany(mappedBy = "roles")
-//  private Set<User> users;
-
-//  private Set<Privilege> privileges;
+  @OneToMany(targetEntity=RoleBindingEntitlement.class)
+  private List<RoleBindingEntitlement> entitlements;
 
   public Long getId() {
     return id;
@@ -32,11 +27,23 @@ public class RoleBinding {
     this.id = id;
   }
 
-  public List<RoleBindingEntitlements> getEntitlements() {
-    return entitlements;
+  public Long getRoleId() {
+    return roleId;
   }
 
-  public void setEntitlements(List<RoleBindingEntitlements> entitlements) {
-    this.entitlements = entitlements;
+  public void setRoleId(Long roleId) {
+    this.roleId = roleId;
+  }
+
+  public Long getUserId() {
+    return userId;
+  }
+
+  public void setUserId(Long userId) {
+    this.userId = userId;
+  }
+
+  public List<RoleBindingEntitlement> getEntitlements() {
+    return entitlements;
   }
 }

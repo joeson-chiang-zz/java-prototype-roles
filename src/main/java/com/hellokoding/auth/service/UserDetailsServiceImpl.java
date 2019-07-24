@@ -36,7 +36,9 @@ public class UserDetailsServiceImpl implements UserDetailsService{
         User user = userRepository.findByUsername(username);
         if (user == null) throw new UsernameNotFoundException(username);
 
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        System.out.println("user:" + user.getUsername());
+        System.out.println("roles" + user.getRoles());
         for (Role role : user.getRoles()){
           System.out.println("role: " + role.getName());
           System.out.println("Privileges: " + role.getPrivileges());
