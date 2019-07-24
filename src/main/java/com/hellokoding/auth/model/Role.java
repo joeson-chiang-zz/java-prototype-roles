@@ -1,5 +1,7 @@
 package com.hellokoding.auth.model;
 
+import com.hellokoding.auth.util.ResourceType;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
@@ -18,11 +20,11 @@ public class Role {
 
     @ManyToMany
     @JoinTable(
-      name = "roles_privileges",
+      name = "roleprivilege",
       joinColumns = @JoinColumn(
-        name = "role_id", referencedColumnName = "id"),
+        name = "roleId", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(
-        name = "privilege_id", referencedColumnName = "id"))
+        name = "privilegeId", referencedColumnName = "id"))
     private List<Privilege> privileges;
 
     public Long getId() {
@@ -56,4 +58,13 @@ public class Role {
     public void setPrivileges(List<Privilege> privileges) {
     this.privileges = privileges;
   }
+
+    public List<String> getPrivilegesByResourceType(ResourceType resourceType) {
+      for (Privilege privilege : privileges) {
+        if (privilege.getResourceType() == resourceType) {
+          return privilege.getOperations();
+        }
+      }
+      return null;
+    }
 }

@@ -23,11 +23,11 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-      name = "roles_bindings",
+      name = "rolebinding",
       joinColumns = @JoinColumn(
-        name = "role_id", referencedColumnName = "id"),
+        name = "roleId", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(
-        name = "user_id", referencedColumnName = "id"))
+        name = "userId", referencedColumnName = "id"))
     private List<RoleBinding> roleBindings;
 
 

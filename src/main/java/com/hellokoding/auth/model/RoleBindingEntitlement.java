@@ -13,7 +13,9 @@ public class RoleBindingEntitlement {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Long roleBindingId;
+  @ManyToOne
+  @JoinColumn(name="roleBindingId", referencedColumnName = "id")
+  private RoleBinding roleBinding;
   private ResourceType resourceType;
   @ElementCollection
   private List<Long> instanceIds;

@@ -16,7 +16,7 @@ public class RoleBinding {
   private Long groupId;
   private Long workspaceId;
 
-  @OneToMany(targetEntity=RoleBindingEntitlement.class)
+  @OneToMany(mappedBy = "roleBinding")
   private List<RoleBindingEntitlement> entitlements;
 
   public Long getId() {
