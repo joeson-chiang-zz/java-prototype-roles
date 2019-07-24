@@ -15,6 +15,7 @@ public class RoleBindingEntitlement {
 
   private Long roleBindingId;
   private ResourceType resourceType;
+  @ElementCollection
   private List<Long> instanceIds;
 
   public void setResourceType(ResourceType resourceType){

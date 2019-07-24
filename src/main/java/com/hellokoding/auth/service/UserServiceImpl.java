@@ -36,6 +36,9 @@ public class UserServiceImpl implements UserService {
         roleBinding.setRoleId(role.getId());
         roleBinding.setUserId(user.getId());
         roleBindingRepository.save(roleBinding);
+
+        System.out.println("Role binding " + roleBinding.getId() + " roleId " + roleBinding.getRoleId());
+        System.out.println("For user " + user.getUsername());
     }
 
     @Override
