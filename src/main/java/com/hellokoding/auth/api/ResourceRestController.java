@@ -74,4 +74,6 @@ public class ResourceRestController {
       return String.join(",", set);
     }
   }
+
+  // TODO: list, role assignment & rolebinding, create role, get roles for user, get all instances for user
 }
