@@ -36,4 +36,8 @@ public class RoleBindingEntitlement {
     return instanceIds;
   };
 
+  public void setRoleBinding(RoleBinding roleBinding) {
+    this.roleBinding = roleBinding;
+  }
+
 }

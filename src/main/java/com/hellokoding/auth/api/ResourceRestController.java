@@ -42,11 +42,15 @@ public class ResourceRestController {
       List<Role> rolesFound = new ArrayList<>();
       System.out.println("Role bindings " + roleBindingList.size());
       for (RoleBinding roleBinding : roleBindingList) {
+        System.out.println("Role binding id " + roleBinding.getId());
         List<RoleBindingEntitlement> roleBindingEntitlement = roleBinding.getEntitlements();
         System.out.println("Role binding entitlements size " + roleBindingEntitlement.size());
         for (RoleBindingEntitlement rbe : roleBindingEntitlement) {
-          if (rbe.getResourceType().name() == resourceName) {
-            System.out.println("Role binding type " + rbe.getResourceType().name());
+          System.out.println("Role binding type " + rbe.getResourceType().name());
+          System.out.println("Resource name " + resourceName);
+          System.out.println("Condition 1 " + (rbe.getResourceType().name() == resourceName.toUpperCase()));
+          System.out.println("Condition 2 " + (rbe.getResourceType().name().equals(resourceName.toUpperCase())));
+          if (rbe.getResourceType().name().equals(resourceName.toUpperCase())) {
             System.out.println("Role binding entitlement " + rbe.getInstanceIds().toString());
             if (rbe.getInstanceIds().contains(id)) {
               // found it
@@ -63,7 +67,7 @@ public class ResourceRestController {
       }
       Set<String> set = new HashSet<>();
       for (Role role : rolesFound) {
-        List<String> operations = role.getPrivilegesByResourceType(ResourceType.valueOf(resourceName));
+        List<String> operations = role.getPrivilegesByResourceType(ResourceType.valueOf(resourceName.toUpperCase()));
         set.addAll(operations);
       }
 

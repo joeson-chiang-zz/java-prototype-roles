@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
         RoleBindingEntitlement entitlement = new RoleBindingEntitlement();
         entitlement.setResourceType(ResourceType.FLOW);
         entitlement.setInstanceIds(Arrays.asList((long) 1));
+        entitlement.setRoleBinding(roleBinding);
         roleBindingEntitlementRepository.save(entitlement);
 
         System.out.println("Role binding " + roleBinding.getId() + " roleId " + roleBinding.getRoleId());
