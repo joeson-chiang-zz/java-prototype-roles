@@ -8,10 +8,11 @@ import com.hellokoding.auth.model.User;
 import com.hellokoding.auth.repository.RoleRepository;
 import com.hellokoding.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.MissingResourceException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -22,6 +23,26 @@ public class UserController {
   @PostMapping(value = "/")
   public void createUser(@RequestBody UserCreate user) {
     createUserFromBody(user);
+  }
+
+  @GetMapping(value="/{userId}/roles")
+  public String getRolesForUser(@PathVariable long userId) {
+    return getRolesForUserId(userId);
+  }
+
+  private String getRolesForUserId(long userId) {
+    Optional<User> userOptional = userRepository.findById(userId);
+    User user = userOptional.isPresent() ? userOptional.get() : null;
+    if (user == null) {
+      throw new MissingResourceException("User not found {}", user.getId().toString(), "");
+    }
+    List<Role> roles = user.getRoleForRoleBindingForUser();
+    String result = "";
+    for (Role role: roles) {
+      result += role.getName();
+      result += " ";
+    }
+    return result;
   }
 
   private void createUserFromBody(UserCreate userCreate) {

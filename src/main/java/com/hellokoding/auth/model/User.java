@@ -3,6 +3,7 @@ package com.hellokoding.auth.model;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user")
@@ -22,7 +23,7 @@ public class User {
     private List<Role> roles;
 
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             mappedBy = "user")
     private List<RoleBinding> roleBindings;
 
@@ -78,4 +79,10 @@ public class User {
     public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
+
+    public List<Role> getRoleForRoleBindingForUser() {
+      System.out.println("Role Bindings size " + roleBindings.size());
+      return roleBindings.stream().map(rb -> rb.getRole()).collect(Collectors.toList());
+    }
+
 }

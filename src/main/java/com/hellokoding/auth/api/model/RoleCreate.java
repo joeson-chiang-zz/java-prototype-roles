@@ -9,6 +9,12 @@ public class RoleCreate {
   private ResourceType resourceType;
   private List<String> operations;
 
+  public RoleCreate(String name, String resourceType, List<String> operations) {
+    this.name = name;
+    this.resourceType = ResourceType.valueOf(resourceType);
+    this.operations = operations;
+  }
+
   public String getName() {
     return name;
   }

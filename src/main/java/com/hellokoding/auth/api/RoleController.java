@@ -26,7 +26,12 @@ public class RoleController {
   }
 
   @GetMapping(value = "/rolebindings/{roleName}", produces = "text/plain")
-  public String getRoleBindingsForRole(String roleName) {
+  public String getRoleBindingsForRole(@PathVariable String roleName) {
+    return getRoleBindingsByRoleName(roleName);
+  }
+
+  private String getRoleBindingsByRoleName(String roleName) {
+    System.out.println("value extracted: " + roleName);
     Role role = roleRepository.findByName(roleName);
     if (role == null) {
       throw new MissingResourceException("Role not found {}", roleName, "");
@@ -39,10 +44,6 @@ public class RoleController {
       result += " ";
     }
     return result;
-  }
-
-  private void getRoleBindingsByRoleName(String roleName) {
-
   }
 
   private void createRoleFromBody(RoleCreate roleCreate) {

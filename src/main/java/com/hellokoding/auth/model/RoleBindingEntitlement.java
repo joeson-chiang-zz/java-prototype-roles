@@ -20,6 +20,16 @@ public class RoleBindingEntitlement {
   @ElementCollection
   private List<Long> instanceIds;
 
+  public RoleBindingEntitlement(RoleBinding roleBinding, ResourceType resourceType, List<Long> instanceIds) {
+    this.roleBinding = roleBinding;
+    this.resourceType = resourceType;
+    this.instanceIds = instanceIds;
+  }
+
+  public RoleBindingEntitlement() {
+
+  }
+
   public void setResourceType(ResourceType resourceType){
     this.resourceType = resourceType;
   };
