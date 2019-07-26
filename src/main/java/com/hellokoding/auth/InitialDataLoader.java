@@ -61,7 +61,7 @@ public class InitialDataLoader implements
     userRepository.save(user);
     System.out.println("user admin is created with name " + user.getUsername()  + " and roles " + user.getRoles());
 
-    RoleBinding roleBinding = createRoleBinding((long) 1, (long) 1);
+    RoleBinding roleBinding = createRoleBinding(adminRole, user);
     createRoleBindingEntitlement(ResourceType.FLOW, Arrays.asList((long) 1, (long) 2, (long) 3), roleBinding);
 
     alreadySetup = true;
@@ -95,10 +95,10 @@ public class InitialDataLoader implements
   }
 
   @Transactional
-  private RoleBinding createRoleBinding (Long roleId, Long userId) {
+  private RoleBinding createRoleBinding (Role role, User user) {
     RoleBinding roleBinding = new RoleBinding();
-    roleBinding.setRoleId(roleId);
-    roleBinding.setUserId(userId);
+    roleBinding.setRole(role);
+    roleBinding.setUser(user);
     roleBindingRepository.save(roleBinding);
     return roleBinding;
   }

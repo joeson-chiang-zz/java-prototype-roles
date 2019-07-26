@@ -8,10 +8,7 @@ import com.hellokoding.auth.repository.RoleRepository;
 import com.hellokoding.auth.repository.UserRepository;
 import com.hellokoding.auth.util.ResourceType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 

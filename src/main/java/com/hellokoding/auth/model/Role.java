@@ -5,6 +5,8 @@ import com.hellokoding.auth.util.ResourceType;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "role")
@@ -13,19 +15,35 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name", unique = true)
     private String name;
 
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-      name = "roleprivilege",
+      name = "role_privilege",
       joinColumns = @JoinColumn(
-        name = "roleId", referencedColumnName = "id"),
+        name = "role_id", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(
-        name = "privilegeId", referencedColumnName = "id"))
+        name = "privilege_id", referencedColumnName = "id"))
     private List<Privilege> privileges;
+
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "role")
+    private List<RoleBinding> roleBindings;
+
+    public Role(String name, Privilege... privileges) {
+      this.name = name;
+      this.privileges = Stream.of(privileges).collect(Collectors.toList());
+      this.privileges.forEach(p -> p.getRoles().add(this));
+    }
+
+    public Role() {
+
+    }
 
     public Long getId() {
         return id;
@@ -56,7 +74,8 @@ public class Role {
   }
 
     public void setPrivileges(List<Privilege> privileges) {
-    this.privileges = privileges;
+      this.privileges = privileges;
+      this.privileges.forEach(p -> p.getRoles().add(this));
   }
 
     public List<String> getPrivilegesByResourceType(ResourceType resourceType) {
@@ -66,5 +85,9 @@ public class Role {
         }
       }
       return null;
+    }
+
+    public List<RoleBinding> getRoleBindings() {
+      return roleBindings;
     }
 }

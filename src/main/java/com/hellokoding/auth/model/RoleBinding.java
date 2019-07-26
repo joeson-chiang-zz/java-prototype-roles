@@ -10,14 +10,30 @@ public class RoleBinding {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Long roleId;
 
-  private Long userId;
   private Long groupId;
   private Long workspaceId;
 
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
+
+  @ManyToOne
+  @JoinColumn(name = "role_id", nullable = false)
+  private Role role;
+
+
   @OneToMany(mappedBy = "roleBinding", fetch = FetchType.EAGER)
   private List<RoleBindingEntitlement> entitlements;
+
+  public RoleBinding() {
+
+  }
+
+  public RoleBinding(User user, Role role) {
+    this.user = user;
+    this.role = role;
+  }
 
   public Long getId() {
     return id;
@@ -28,19 +44,19 @@ public class RoleBinding {
   }
 
   public Long getRoleId() {
-    return roleId;
+    return role.getId();
   }
 
-  public void setRoleId(Long roleId) {
-    this.roleId = roleId;
+  public void setRole(Role role) {
+    this.role = role;
   }
 
   public Long getUserId() {
-    return userId;
+    return user.getId();
   }
 
-  public void setUserId(Long userId) {
-    this.userId = userId;
+  public void setUser(User user) {
+    this.user = user;
   }
 
   public List<RoleBindingEntitlement> getEntitlements() {

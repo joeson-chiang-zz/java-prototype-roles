@@ -21,17 +21,21 @@ public class User {
     @ManyToMany
     private List<Role> roles;
 
-    @ManyToMany
-    @JoinTable(
-      name = "rolebinding",
-      joinColumns = @JoinColumn(
-        name = "roleId", referencedColumnName = "id"),
-      inverseJoinColumns = @JoinColumn(
-        name = "userId", referencedColumnName = "id"))
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "user")
     private List<RoleBinding> roleBindings;
 
+  public User(String username, String password) {
+    this.username = username;
+    this.password = password;
+  }
 
-    public Long getId() {
+  public User() {
+
+  }
+
+  public Long getId() {
         return id;
     }
 

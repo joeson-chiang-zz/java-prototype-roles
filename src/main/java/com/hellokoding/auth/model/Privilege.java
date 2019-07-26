@@ -19,6 +19,18 @@ public class Privilege {
   @ElementCollection
   private List<String> operations;
 
+  @ManyToMany(mappedBy = "privileges")
+  private List<Role> roles = new ArrayList<>();
+
+  public Privilege(ResourceType resourceType, List<String> operations) {
+    this.resourceType = resourceType;
+    this.operations = operations;
+  }
+
+  public Privilege() {
+
+  }
+
   public Long getId() {
       return id;
     }
@@ -42,4 +54,8 @@ public class Privilege {
   public List<String> getOperations() {
     return operations;
   };
+
+  public List<Role> getRoles() {
+    return roles;
+  }
 }
