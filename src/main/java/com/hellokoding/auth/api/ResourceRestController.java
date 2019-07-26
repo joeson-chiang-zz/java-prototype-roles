@@ -72,5 +72,47 @@ public class ResourceRestController {
     }
   }
 
-  // TODO: list, role assignment & rolebinding, create role, get roles for user, get all instances for user
+  @GetMapping(value = "/{resourceName}/user/{userId}", produces = "text/plain")
+  public String listResources(@PathVariable String resourceName, @PathVariable int userId) {
+    return listAllResources(userId, resourceName);
+  }
+
+  private String listAllResources(long userId, String resourceName) {
+    Map<Long, Set<String>> resourceMap = new HashMap<>();
+    Optional<User> optionalUser = userRepository.findById(userId);
+    User user = optionalUser.isPresent() ? optionalUser.get() : null;
+    if (user == null) {
+      return null;
+    } else {
+      List<RoleBinding> roleBindingList = user.getRoleBindings();
+      List<Role> rolesFound = new ArrayList<>();
+//      System.out.println("Role bindings " + roleBindingList.size());
+      for (RoleBinding roleBinding : roleBindingList) {
+//        System.out.println("Role binding id " + roleBinding.getId());
+        List<RoleBindingEntitlement> roleBindingEntitlement = roleBinding.getEntitlements();
+//        System.out.println("Role binding entitlements size " + roleBindingEntitlement.size());
+        for (RoleBindingEntitlement rbe : roleBindingEntitlement) {
+//          System.out.println("Role binding type " + rbe.getResourceType().name());
+          if (rbe.getResourceType().name().equals(resourceName.toUpperCase())) {
+//            System.out.println("Role binding entitlement " + rbe.getInstanceIds().toString());
+            // found it
+            Optional<Role> roleOptional = roleRepository.findById(roleBinding.getRoleId());
+            Role role = roleOptional.isPresent() ? roleOptional.get() : null;
+            List<String> operations = role.getPrivilegesByResourceType(ResourceType.valueOf(resourceName.toUpperCase()));
+
+            for (Long id : rbe.getInstanceIds()) {
+              if (resourceMap.containsKey(id)) {
+                resourceMap.get(id).addAll(operations);
+              } else {
+                resourceMap.put(id, new HashSet<>(operations));
+              }
+            }
+          }
+        }
+      }
+      return resourceMap.toString();
+    }
+  }
+
+  // TODO: role assignment & rolebinding, create role, get roles for user, get all instances for user
 }
