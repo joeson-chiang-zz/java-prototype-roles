@@ -108,7 +108,7 @@ public class InitialDataLoader implements
     ResourceType type, List<Long> instanceIds, RoleBinding roleBinding) {
     RoleBindingEntitlement entitlement = new RoleBindingEntitlement();
     entitlement.setResourceType(type);
-    entitlement.setInstanceIds(instanceIds);
+    entitlement.setInstanceIds(new HashSet<>(instanceIds));
     entitlement.setRoleBinding(roleBinding);
     roleBindingEntitlementRepository.save(entitlement);
     return entitlement;

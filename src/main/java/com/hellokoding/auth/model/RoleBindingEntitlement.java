@@ -4,7 +4,9 @@ import com.hellokoding.auth.util.ResourceType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "rolebindingentitlement")
@@ -18,12 +20,12 @@ public class RoleBindingEntitlement {
   private RoleBinding roleBinding;
   private ResourceType resourceType;
   @ElementCollection
-  private List<Long> instanceIds;
+  private Set<Long> instanceIds;
 
   public RoleBindingEntitlement(RoleBinding roleBinding, ResourceType resourceType, List<Long> instanceIds) {
     this.roleBinding = roleBinding;
     this.resourceType = resourceType;
-    this.instanceIds = instanceIds;
+    this.instanceIds = new HashSet<>(instanceIds);
   }
 
   public RoleBindingEntitlement() {
@@ -38,11 +40,11 @@ public class RoleBindingEntitlement {
     return resourceType;
   };
 
-  public void setInstanceIds(List<Long> instanceIds){
+  public void setInstanceIds(Set<Long> instanceIds){
     this.instanceIds = instanceIds;
   };
 
-  public List<Long> getInstanceIds() {
+  public Set<Long> getInstanceIds() {
     return instanceIds;
   };
 

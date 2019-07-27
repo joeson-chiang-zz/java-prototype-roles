@@ -23,7 +23,7 @@ public class RoleBinding {
   private Role role;
 
 
-  @OneToMany(mappedBy = "roleBinding", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "roleBinding", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<RoleBindingEntitlement> entitlements;
 
   public RoleBinding() {
