@@ -13,6 +13,7 @@ import com.hellokoding.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.MissingResourceException;
 import java.util.Optional;
 
@@ -42,6 +43,40 @@ public class RoleBindingController {
                                                @RequestBody EntitlementCreate entitlementCreate) {
     RoleBinding roleBinding = bindRoleToUser(roleName, userId);
     addInstancesToRoleBinding(roleBinding, entitlementCreate);
+  }
+
+  @PutMapping(value = "/role/{roleName}/user/{userId}/instances")
+  public void addEntitlement(@PathVariable String roleName, @PathVariable long userId,
+                                               @RequestBody EntitlementCreate entitlementCreate) {
+    Role role = roleRepository.findByName(roleName);
+    RoleBinding roleBinding = roleBindingRepository.findByRoleAndUser(role.getId(), userId);
+    addEntitlementToRoleBinding(roleBinding, entitlementCreate);
+  }
+
+  @DeleteMapping(value = "/role/{roleName}/user/{userId}/instances")
+  public void removeEntitlement(@PathVariable String roleName, @PathVariable long userId,
+                             @RequestBody EntitlementCreate entitlementCreate) {
+    Role role = roleRepository.findByName(roleName);
+    RoleBinding roleBinding = roleBindingRepository.findByRoleAndUser(role.getId(), userId);
+    removeEntitlementFromRoleBinding(roleBinding, entitlementCreate);
+  }
+
+  private void removeEntitlementFromRoleBinding(RoleBinding roleBinding, EntitlementCreate entitlementCreate) {
+    RoleBindingEntitlement roleBindingEntitlement = roleBindingEntitlementRepository.findRbeByRbIdAndType(
+            roleBinding.getId(), entitlementCreate.getResourceType());
+    roleBindingEntitlement.getInstanceIds().removeAll(entitlementCreate.getInstances());
+    if (roleBindingEntitlement.getInstanceIds().size() > 0) {
+      roleBindingEntitlementRepository.save(roleBindingEntitlement);
+    } else {
+      roleBindingEntitlementRepository.delete(roleBindingEntitlement);
+    }
+  }
+
+  private void addEntitlementToRoleBinding(RoleBinding roleBinding, EntitlementCreate entitlementCreate) {
+    RoleBindingEntitlement roleBindingEntitlement = roleBindingEntitlementRepository.findRbeByRbIdAndType(
+            roleBinding.getId(), entitlementCreate.getResourceType());
+    roleBindingEntitlement.getInstanceIds().addAll(entitlementCreate.getInstances());
+    roleBindingEntitlementRepository.save(roleBindingEntitlement);
   }
 
   private void addInstancesToRoleBinding(RoleBinding roleBinding, EntitlementCreate entitlementCreate) {
