@@ -86,15 +86,10 @@ public class ResourceRestController {
     } else {
       List<RoleBinding> roleBindingList = user.getRoleBindings();
       List<Role> rolesFound = new ArrayList<>();
-//      System.out.println("Role bindings " + roleBindingList.size());
       for (RoleBinding roleBinding : roleBindingList) {
-//        System.out.println("Role binding id " + roleBinding.getId());
         List<RoleBindingEntitlement> roleBindingEntitlement = roleBinding.getEntitlements();
-//        System.out.println("Role binding entitlements size " + roleBindingEntitlement.size());
         for (RoleBindingEntitlement rbe : roleBindingEntitlement) {
-//          System.out.println("Role binding type " + rbe.getResourceType().name());
           if (rbe.getResourceType().name().equals(resourceName.toUpperCase())) {
-//            System.out.println("Role binding entitlement " + rbe.getInstanceIds().toString());
             // found it
             Optional<Role> roleOptional = roleRepository.findById(roleBinding.getRoleId());
             Role role = roleOptional.isPresent() ? roleOptional.get() : null;
