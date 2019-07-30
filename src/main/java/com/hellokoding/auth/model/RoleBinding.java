@@ -27,12 +27,14 @@ public class RoleBinding {
   private List<RoleBindingEntitlement> entitlements;
 
   public RoleBinding() {
-
   }
 
-  public RoleBinding(User user, Role role) {
+  public RoleBinding(User user, Role role, Long id) {
     this.user = user;
     this.role = role;
+    if (id != null) {
+      this.id = id;
+    }
   }
 
   public Long getId() {

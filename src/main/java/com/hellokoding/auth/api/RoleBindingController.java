@@ -13,7 +13,12 @@ import com.hellokoding.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+<<<<<<< HEAD
 import java.util.HashSet;
+=======
+import java.util.ArrayList;
+import java.util.List;
+>>>>>>> 9c6cf0c93a088dbb0b05a8db3720108cd42ea675
 import java.util.MissingResourceException;
 import java.util.Optional;
 
@@ -35,13 +40,13 @@ public class RoleBindingController {
 
   @PostMapping(value = "/role/{roleName}/user/{userId}")
   public void createRoleBinding(@PathVariable String roleName, @PathVariable long userId) {
-    bindRoleToUser(roleName, userId);
+    bindRoleToUser(roleName, userId, null);
   }
 
   @PostMapping(value = "/role/{roleName}/user/{userId}/instances")
   public void createRoleBindingWithEntitlement(@PathVariable String roleName, @PathVariable long userId,
                                                @RequestBody EntitlementCreate entitlementCreate) {
-    RoleBinding roleBinding = bindRoleToUser(roleName, userId);
+    RoleBinding roleBinding = bindRoleToUser(roleName, userId, null);
     addInstancesToRoleBinding(roleBinding, entitlementCreate);
   }
 
@@ -79,15 +84,21 @@ public class RoleBindingController {
     roleBindingEntitlementRepository.save(roleBindingEntitlement);
   }
 
+  @PutMapping(value = "/fromUser/{fromUserId}/toUser/{toUserId}")
+  public void transferRoleBindings(@PathVariable long fromUserId, @PathVariable long toUserId) {
+    transferRoleBindingsToNewUser(fromUserId, toUserId);
+  }
+
   private void addInstancesToRoleBinding(RoleBinding roleBinding, EntitlementCreate entitlementCreate) {
     roleBindingEntitlementRepository.save(
             new RoleBindingEntitlement(roleBinding, entitlementCreate.getResourceType(), entitlementCreate.getInstances()));
   }
 
-  private RoleBinding bindRoleToUser(String roleName, long userId) {
+  private RoleBinding bindRoleToUser(String roleName, long userId, Long roleBindingId) {
     Role role = roleRepository.findByName(roleName);
     Optional<User> userOptional = userRepository.findById(userId);
     User user = userOptional.isPresent() ? userOptional.get() : null;
+
     if (role == null) {
       throw new MissingResourceException("Role is missing {}", roleName, "");
     }
@@ -96,8 +107,28 @@ public class RoleBindingController {
     }
     RoleBinding roleBinding = roleBindingRepository.findByRoleAndUser(role.getId(), userId);
     if (roleBinding == null) {
-      roleBinding = roleBindingRepository.save(new RoleBinding(user, role));
+      roleBinding = roleBindingRepository.save(new RoleBinding(user, role, roleBindingId));
     }
     return roleBinding;
+  }
+
+  private void transferRoleBindingsToNewUser(long fromUserId, long toUserId) {
+    Optional<User> fromUserOptional = userRepository.findById(fromUserId);
+    User fromUser = fromUserOptional.isPresent() ? fromUserOptional.get() : null;
+
+    Optional<User> toUserOptional = userRepository.findById(toUserId);
+    User toUser = toUserOptional.isPresent() ? toUserOptional.get() : null;
+
+    if (fromUser == null) {
+      throw new MissingResourceException("User is missing {}", fromUser.getId().toString(), "");
+    }
+
+    if (toUser == null) {
+      throw new MissingResourceException("User is missing {}", toUser.getId().toString(), "");
+    }
+
+    for(RoleBinding roleBinding : fromUser.getRoleBindings()) {
+      RoleBinding rb = bindRoleToUser(roleBinding.getRole().getName(), toUser.getId(), roleBinding.getId());
+    }
   }
 }
